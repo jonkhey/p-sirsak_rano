@@ -1,0 +1,132 @@
+<div class="modal-header bg-{{ $styleApp->value_10 }}">
+   <h4 class="modal-title">Pelaporan Pemeliharaan</h4>
+   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+   </button>
+</div>
+<div class="modal-body">
+   @php
+      if ($dataMode == 'addPelaporan') {
+          $kdLaporan = 'LP' . date('ymd') . '0000';
+          $tglLaporan = date('Y-m-d');
+          $noKontainer = $si = $suratPenugasan = $keterangan = $tglPengiriman = $nmSupir = $ketersediaanTruck = $fotoTruck = '';
+      }
+
+      if ($dataMode == 'editPelaporan') {
+          $kdLaporan = $pelaporanPengiriman->kd_laporan;
+          $tglLaporan = $pelaporanPengiriman->tgl_laporan;
+          $noKontainer = $pelaporanPengiriman->no_kontainer;
+          $si = $pelaporanPengiriman->si;
+          $suratPenugasan = $pelaporanPengiriman->surat_penugasan;
+          $keterangan = $pelaporanPengiriman->keterangan_laporan;
+          $tglPengiriman = $pelaporanPengiriman->tgl_pengiriman;
+          $nmSupir = $pelaporanPengiriman->nm_supir;
+          $ketersediaanTruck = $pelaporanPengiriman->ketersediaan_truck;
+          $fotoTruck = $pelaporanPengiriman->foto_truck;
+      }
+   @endphp
+   <form action="{{ url('pelaporan_pengiriman') }}" method="post" autocomplete="off" enctype="multipart/form-data">
+      @csrf
+      <input type="hidden" name="kdLaporan" value="{{ $kdLaporan }}" required readonly>
+      <input type="hidden" name="dataMode" value="{{ $dataMode }}" required readonly>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Tanggal</label>
+         <div class="col-sm-2">
+            <input type="date" class="form-control" name="tglLaporan" value="{{ $tglLaporan }}" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">No Kontainer</label>
+         <div class="col-sm-6">
+            <input type="text" class="form-control" name="noKontainer" value="{{ $noKontainer }}" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Shipping Instruction</label>
+         <div class="col-sm-6">
+            <input type="text" class="form-control" name="si" value="{{ $si }}" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Surat Penugasan</label>
+         <div class="col-sm-4">
+            <input type="file" class="form-control" name="suratPenugasan" value="{{ $suratPenugasan }}">
+            <code>file harus berformat pdf, maksimal 1MB</code>
+         </div>
+         @if ($suratPenugasan)
+            <div class="col-sm-4">
+               <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt(0)]) }}"><i
+                     class="fas fa-download"></i> Download File</a>
+            </div>
+         @endif
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Keterangan</label>
+         <div class="col-sm-7">
+            <textarea class="form-control" name="keterangan" cols="30" rows="4" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>{{ $keterangan }}</textarea>
+         </div>
+      </div>
+
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Tanggal Pengiriman</label>
+         <div class="col-sm-2">
+            <input type="date" class="form-control" name="tglPengiriman" value="{{ $tglPengiriman }}" @required($dataMode == 'editPelaporan') @readonly($dataMode == 'addPelaporan')>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Nama Sopir</label>
+         <div class="col-sm-6">
+            <input type="text" class="form-control" name="nmSupir" value="{{ $nmSupir }}" @required($dataMode == 'editPelaporan') @readonly($dataMode == 'addPelaporan')>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Ketersediaan Truck</label>
+         <div class="col-sm-2">
+            <input type="number" class="form-control" name="ketersediaanTruck" value="{{ $ketersediaanTruck }}" @required($dataMode == 'editPelaporan') @readonly($dataMode == 'addPelaporan')>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Foto Truck</label>
+         <div class="col-sm-9">
+            <div class="input-group">
+               <div class="row">
+                  @if ($dataMode == 'editPelaporan')
+                     <div class="col-lg-12">
+                        @include('components.file_upload', ['name' => 'fotoTruck'])
+                        <code>foto harus berformat jpg / png, maksimal 1MB</code>
+                     </div>
+                  @else
+                     <label for="">-</label>
+                  @endif
+                  @if ($fotoTruck)
+                     <div class="col-lg-12">
+                        <img src="{{ asset('storage/foto-lap-pengiriman/' . $fotoTruck) }}" alt="{{ $fotoTruck }}" id="fotoTruck" style="width: 100%;">
+                     </div>
+                  @endif
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label"></label>
+         <div class="col-sm-9">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            @if (
+                ($dataMode == 'addPelaporan' && auth()->user()->userData()->joinMstRoles->urutan_role == 2) ||
+                    ($dataMode == 'editPelaporan' && auth()->user()->userData()->joinMstRoles->urutan_role == 3))
+               <button type="submit" class="btn btn-info">Simpan</button>
+            @endif
+         </div>
+      </div>
+   </form>
+</div>
