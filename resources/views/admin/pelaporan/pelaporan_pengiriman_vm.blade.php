@@ -6,10 +6,11 @@
 </div>
 <div class="modal-body">
    @php
+      $roles = auth()->user()->userData()->joinMstRoles->urutan_role;
       if ($dataMode == 'addPelaporan') {
           $kdLaporan = 'LP' . date('ymd') . '0000';
           $tglLaporan = date('Y-m-d');
-          $noKontainer = $si = $suratPenugasan = $keterangan = $tglPengiriman = $nmSupir = $ketersediaanTruck = $fotoTruck = '';
+          $noKontainer = $si = $suratPenugasan = $keterangan = $tglPengiriman = $nmSupir = $ketersediaanTruck = $fotoTruck = $nomorPelat = '';
       }
 
       if ($dataMode == 'editPelaporan') {
@@ -23,6 +24,7 @@
           $nmSupir = $pelaporanPengiriman->nm_supir;
           $ketersediaanTruck = $pelaporanPengiriman->ketersediaan_truck;
           $fotoTruck = $pelaporanPengiriman->foto_truck;
+          $nomorPelat = $pelaporanPengiriman->nomor_pelat;
       }
    @endphp
    <form action="{{ url('pelaporan_pengiriman') }}" method="post" autocomplete="off" enctype="multipart/form-data">
@@ -33,21 +35,21 @@
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Tanggal</label>
          <div class="col-sm-2">
-            <input type="date" class="form-control" name="tglLaporan" value="{{ $tglLaporan }}" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>
+            <input type="date" class="form-control" name="tglLaporan" value="{{ $tglLaporan }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">No Kontainer</label>
          <div class="col-sm-6">
-            <input type="text" class="form-control" name="noKontainer" value="{{ $noKontainer }}" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>
+            <input type="text" class="form-control" name="noKontainer" value="{{ $noKontainer }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Shipping Instruction</label>
          <div class="col-sm-6">
-            <input type="text" class="form-control" name="si" value="{{ $si }}" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>
+            <input type="text" class="form-control" name="si" value="{{ $si }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
          </div>
       </div>
 
@@ -68,7 +70,7 @@
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Keterangan</label>
          <div class="col-sm-7">
-            <textarea class="form-control" name="keterangan" cols="30" rows="4" @required($dataMode == 'addPelaporan') @readonly($dataMode == 'editPelaporan')>{{ $keterangan }}</textarea>
+            <textarea class="form-control" name="keterangan" cols="30" rows="4" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>{{ $keterangan }}</textarea>
          </div>
       </div>
 
@@ -76,21 +78,28 @@
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Tanggal Pengiriman</label>
          <div class="col-sm-2">
-            <input type="date" class="form-control" name="tglPengiriman" value="{{ $tglPengiriman }}" @required($dataMode == 'editPelaporan') @readonly($dataMode == 'addPelaporan')>
+            <input type="date" class="form-control" name="tglPengiriman" value="{{ $tglPengiriman }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Nama Sopir</label>
          <div class="col-sm-6">
-            <input type="text" class="form-control" name="nmSupir" value="{{ $nmSupir }}" @required($dataMode == 'editPelaporan') @readonly($dataMode == 'addPelaporan')>
+            <input type="text" class="form-control" name="nmSupir" value="{{ $nmSupir }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Ketersediaan Truck</label>
          <div class="col-sm-2">
-            <input type="number" class="form-control" name="ketersediaanTruck" value="{{ $ketersediaanTruck }}" @required($dataMode == 'editPelaporan') @readonly($dataMode == 'addPelaporan')>
+            <input type="number" class="form-control" name="ketersediaanTruck" value="{{ $ketersediaanTruck }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
+         </div>
+      </div>
+
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Pelat Nomor Truck</label>
+         <div class="col-sm-2">
+            <input type="text" class="form-control" name="nomorPelat" value="{{ $nomorPelat }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
          </div>
       </div>
 
@@ -109,7 +118,7 @@
                   @endif
                   @if ($fotoTruck)
                      <div class="col-lg-12">
-                        <img src="{{ asset('storage/foto-lap-pengiriman/' . $fotoTruck) }}" alt="{{ $fotoTruck }}" id="fotoTruck" style="width: 100%;">
+                        <img src="{{ url('storage/foto-lap-pengiriman/' . $fotoTruck) }}" alt="{{ $fotoTruck }}" id="fotoTruck" style="width: 100%;">
                      </div>
                   @endif
                </div>
@@ -121,11 +130,7 @@
          <label class="col-sm-2 col-form-label"></label>
          <div class="col-sm-9">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            @if (
-                ($dataMode == 'addPelaporan' && auth()->user()->userData()->joinMstRoles->urutan_role == 2) ||
-                    ($dataMode == 'editPelaporan' && auth()->user()->userData()->joinMstRoles->urutan_role == 3))
-               <button type="submit" class="btn btn-info">Simpan</button>
-            @endif
+            <button type="submit" class="btn btn-info">Simpan</button>
          </div>
       </div>
    </form>

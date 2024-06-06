@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\LaporanPengiriman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class PelaporanController extends Controller
 {
@@ -60,18 +62,36 @@ class PelaporanController extends Controller
                   'si'           => $request->si,
                   'keterangan_laporan' => $request->keterangan,
                   'user_laporan' => auth()->user()->username,
+
+                  'tgl_pengiriman' => $request->tglPengiriman,
+                  'nm_supir' => $request->nmSupir,
+                  'ketersediaan_truck' => $request->ketersediaanTruck,
+                  'user_armada' => auth()->user()->username,
+                  'nomor_pelat' => $request->nomorPelat,
                ];
 
-               $file = $request->file('suratPenugasan');
-               if ($file) {
+               $file1 = $request->file('suratPenugasan');
+               if ($file1) {
                   $request->validate([
                      'suratPenugasan'  => 'required|mimes:pdf|max:1204',
                   ]);
 
-                  $fileName = $noTrans . '_' . time() . '.' . $file->getClientOriginalExtension();
-                  $file->storeAs('foto-lap-pengiriman', $fileName, 'public');
+                  $fileName = $noTrans . '_' . time() . '.' . $file1->getClientOriginalExtension();
+                  $file1->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
                   $laporanPengiriman['surat_penugasan'] = $fileName;
+               }
+
+               $file2 = $request->file('fotoTruck');
+               if ($file2) {
+                  $request->validate([
+                     'fotoTruck'  => 'required|image|mimes:jpeg,jpg,png|max:1204',
+                  ]);
+
+                  $fileName =  $noTrans . '_' . time() . '.' . $file2->getClientOriginalExtension();
+                  $file2->storeAs('foto-lap-pengiriman', $fileName, 'public');
+
+                  $laporanPengiriman['foto_truck'] = $fileName;
                }
 
                LaporanPengiriman::create($laporanPengiriman);
@@ -85,20 +105,39 @@ class PelaporanController extends Controller
                }
 
                $updateData = [
+                  'tgl_laporan'  => $request->tglLaporan,
+                  'no_kontainer' => $request->noKontainer,
+                  'si'           => $request->si,
+                  'keterangan_laporan' => $request->keterangan,
+                  'user_laporan' => auth()->user()->username,
+
                   'tgl_pengiriman' => $request->tglPengiriman,
                   'nm_supir' => $request->nmSupir,
                   'ketersediaan_truck' => $request->ketersediaanTruck,
                   'user_armada' => auth()->user()->username,
+                  'nomor_pelat' => $request->nomorPelat,
                ];
 
-               $file = $request->file('fotoTruck');
-               if ($file) {
+               $file1 = $request->file('suratPenugasan');
+               if ($file1) {
+                  $request->validate([
+                     'suratPenugasan'  => 'required|mimes:pdf|max:1204',
+                  ]);
+
+                  $fileName = $request->kdLaporan . '_' . time() . '.' . $file1->getClientOriginalExtension();
+                  $file1->storeAs('foto-lap-pengiriman', $fileName, 'public');
+
+                  $updateData['surat_penugasan'] = $fileName;
+               }
+
+               $file2 = $request->file('fotoTruck');
+               if ($file2) {
                   $request->validate([
                      'fotoTruck'  => 'required|image|mimes:jpeg,jpg,png|max:1204',
                   ]);
 
-                  $fileName =  $request->kdLaporan . '_' . time() . '.' . $file->getClientOriginalExtension();
-                  $file->storeAs('foto-lap-pengiriman', $fileName, 'public');
+                  $fileName =  $request->kdLaporan . '_' . time() . '.' . $file2->getClientOriginalExtension();
+                  $file2->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
                   $updateData['foto_truck'] = $fileName;
                }
@@ -136,5 +175,22 @@ class PelaporanController extends Controller
       } else {
          return redirect()->back()->with('error', 'File tidak ditemukan.');
       }
+   }
+
+   public function showFile($folder, $filename)
+   {
+      $path = storage_path('app/public/' . $folder . '/' . $filename);
+
+      if (!File::exists($path)) {
+         abort(404);
+      }
+
+      $file = File::get($path);
+      $type = File::mimeType($path);
+
+      $response = Response::make($file, 200);
+      $response->header("Content-Type", $type);
+
+      return $response;
    }
 }

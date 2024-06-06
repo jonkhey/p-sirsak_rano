@@ -24,6 +24,7 @@ class LaporanPengiriman extends Model
       'ketersediaan_truck',
       'user_armada',
       'keterangan_kirim',
+      'nomor_pelat',
    ];
    public $incrementing = false;
    public $keyType = 'string';

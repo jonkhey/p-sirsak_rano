@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
       Route::post('pelaporan_pengiriman', 'savePelaporanPengiriman');
 
       Route::get('pelaporan_pengiriman/download/{id1}/{id2}', 'downloadFile');
+      Route::get('storage/{id1}/{id2}', 'showFile');
       ##################################################################################
    });
 
