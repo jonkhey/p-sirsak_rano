@@ -1,5 +1,5 @@
 <div class="modal-header bg-{{ $styleApp->value_10 }}">
-   <h4 class="modal-title">Pelaporan Pemeliharaan</h4>
+   <h4 class="modal-title">Shipping Instruction</h4>
    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
    </button>
@@ -40,17 +40,37 @@
       </div>
 
       <div class="form-group row">
-         <label class="col-sm-2 col-form-label">No Kontainer</label>
-         <div class="col-sm-6">
-            <input type="text" class="form-control" name="noKontainer" value="{{ $noKontainer }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
+         <label class="col-sm-2 col-form-label">Shipping Instruction</label>
+         {{-- <div class="col-sm-6">
+            <input type="text" class="form-control" name="si" value="{{ $si }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
+         </div> --}}
+         <div class="col-sm-4">
+            <input type="file" class="form-control" name="si" value="{{ $si }}">
+            <code>file harus berformat pdf, maksimal 1MB</code>
          </div>
+         @if ($si)
+            <div class="col-sm-4">
+               <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt('si')]) }}"><i
+                     class="fas fa-download"></i> Download File</a>
+            </div>
+         @endif
       </div>
 
       <div class="form-group row">
-         <label class="col-sm-2 col-form-label">Shipping Instruction</label>
-         <div class="col-sm-6">
-            <input type="text" class="form-control" name="si" value="{{ $si }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
+         <label class="col-sm-2 col-form-label">No Kontainer</label>
+         {{-- <div class="col-sm-6">
+            <input type="text" class="form-control" name="noKontainer" value="{{ $noKontainer }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
+         </div> --}}
+         <div class="col-sm-4">
+            <input type="file" class="form-control" name="noKontainer" value="{{ $noKontainer }}">
+            <code>file harus berformat pdf, maksimal 1MB</code>
          </div>
+         @if ($noKontainer)
+            <div class="col-sm-4">
+               <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt('noKontainer')]) }}"><i
+                     class="fas fa-download"></i> Download File</a>
+            </div>
+         @endif
       </div>
 
       <div class="form-group row">
@@ -61,7 +81,7 @@
          </div>
          @if ($suratPenugasan)
             <div class="col-sm-4">
-               <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt(0)]) }}"><i
+               <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt('suratPenugasan')]) }}"><i
                      class="fas fa-download"></i> Download File</a>
             </div>
          @endif
@@ -74,7 +94,6 @@
          </div>
       </div>
 
-
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Tanggal Pengiriman</label>
          <div class="col-sm-2">
@@ -83,16 +102,16 @@
       </div>
 
       <div class="form-group row">
-         <label class="col-sm-2 col-form-label">Nama Sopir</label>
-         <div class="col-sm-6">
-            <input type="text" class="form-control" name="nmSupir" value="{{ $nmSupir }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
+         <label class="col-sm-2 col-form-label">Ketersediaan Truck</label>
+         <div class="col-sm-2">
+            <input type="number" class="form-control" name="ketersediaanTruck" value="{{ $ketersediaanTruck }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
          </div>
       </div>
 
       <div class="form-group row">
-         <label class="col-sm-2 col-form-label">Ketersediaan Truck</label>
-         <div class="col-sm-2">
-            <input type="number" class="form-control" name="ketersediaanTruck" value="{{ $ketersediaanTruck }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
+         <label class="col-sm-2 col-form-label">Nama Sopir</label>
+         <div class="col-sm-6">
+            <input type="text" class="form-control" name="nmSupir" value="{{ $nmSupir }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
          </div>
       </div>
 

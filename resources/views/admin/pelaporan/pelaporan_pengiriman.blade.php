@@ -7,13 +7,13 @@
       <div class="col-lg-12">
          <div class="card card-{{ $styleApp->value_10 }}">
             <div class="card-header">
-               <h3 class="card-title">Halaman Pelaporan Pengiriman</h3>
+               <h3 class="card-title">Halaman Shipping Instruction</h3>
             </div>
             <div class="card-body">
                <div class="form-group">
                   @if (auth()->user()->userData()->joinMstRoles->urutan_role == 2)
                      <button type="button" data-mode="addPelaporan" data-id="0" class="dataModall btn btn-{{ $styleApp->value_10 }}" data-toggle="modal" data-target="#modalForm">
-                        Tambah Pelaporan Pengiriman
+                        Tambah Shipping Instruction
                      </button>
                   @endif
                </div>
@@ -24,8 +24,8 @@
                         <th>#</th>
                         <th>Kode</th>
                         <th>Tanggal</th>
+                        <th>Shipping Instruction</th>
                         <th>No Kontainer</th>
-                        <th>SI</th>
                         <th>Surat Tugas</th>
                         <th>Keterangan</th>
                         <th>Tgl Kirim</th>
@@ -39,11 +39,23 @@
                            <td> {{ $loop->iteration }} </td>
                            <td> {!! $rs->kd_laporan !!} </td>
                            <td> {!! tanggal($rs->tgl_laporan) !!} </td>
-                           <td> {!! $rs->no_kontainer !!} </td>
-                           <td> {!! $rs->si !!} </td>
+                           <td>
+                              @if ($rs->si)
+                                 <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt('si')]) }}"><i
+                                       class="fas fa-download"></i></a>
+                              @endif
+                           </td>
+                           <td>
+                              @if ($rs->no_kontainer)
+                                 <a class="btn btn-sm btn-success"
+                                    href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt('noKontainer')]) }}"><i
+                                       class="fas fa-download"></i></a>
+                              @endif
+                           </td>
                            <td>
                               @if ($rs->surat_penugasan)
-                                 <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt(0)]) }}"><i
+                                 <a class="btn btn-sm btn-success"
+                                    href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt('suratPenugasan')]) }}"><i
                                        class="fas fa-download"></i></a>
                               @endif
                            </td>
@@ -55,6 +67,9 @@
                                  data-target="#modalForm">
                                  Edit
                               </button>
+                              <a class="btn btn-sm btn-danger"
+                                 href="{{ url('pelaporan_pengiriman/delete', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt('foto-lap-pengiriman'), 'id3' => encrypt(0)]) }}"
+                                 onclick="return confirm('Apakah Anda yakin ingin Shipping Instruction ini ?')"><i class="fas fa-trash-alt"></i></a>
                            </td>
                         </tr>
                      @endforeach

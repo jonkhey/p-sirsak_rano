@@ -66,6 +66,8 @@ Route::middleware('auth')->group(function () {
 
       Route::get('pelaporan_pengiriman/download/{id1}/{id2}', 'downloadFile');
       Route::get('storage/{id1}/{id2}', 'showFile');
+
+      Route::get('pelaporan_pengiriman/delete/{id1}/{id2}/{id3}', 'deletePelaporan');
       ##################################################################################
    });
 

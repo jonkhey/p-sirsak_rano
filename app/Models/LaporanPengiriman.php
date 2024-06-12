@@ -25,6 +25,7 @@ class LaporanPengiriman extends Model
       'user_armada',
       'keterangan_kirim',
       'nomor_pelat',
+      'is_hapus',
    ];
    public $incrementing = false;
    public $keyType = 'string';
