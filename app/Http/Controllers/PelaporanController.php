@@ -76,10 +76,10 @@ class PelaporanController extends Controller
                      'si'  => 'required|mimes:pdf|max:1204',
                   ]);
 
-                  $fileName = $request->kdLaporan . '_' . time() . '.' . $fileSI->getClientOriginalExtension();
+                  $fileName = $noTrans . '-SI_' . time() . '.' . $fileSI->getClientOriginalExtension();
                   $fileSI->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
-                  $updateData['si'] = $fileName;
+                  $laporanPengiriman['si'] = $fileName;
                }
 
                $fileNoKontainer = $request->file('noKontainer');
@@ -88,10 +88,10 @@ class PelaporanController extends Controller
                      'noKontainer'  => 'required|mimes:pdf|max:1204',
                   ]);
 
-                  $fileName = $request->kdLaporan . '_' . time() . '.' . $fileNoKontainer->getClientOriginalExtension();
+                  $fileName = $noTrans . '-NK_' . time() . '.' . $fileNoKontainer->getClientOriginalExtension();
                   $fileNoKontainer->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
-                  $updateData['no_kontainer'] = $fileName;
+                  $laporanPengiriman['no_kontainer'] = $fileName;
                }
 
                $fileSuratPenugasan = $request->file('suratPenugasan');
@@ -100,10 +100,10 @@ class PelaporanController extends Controller
                      'suratPenugasan'  => 'required|mimes:pdf|max:1204',
                   ]);
 
-                  $fileName = $request->kdLaporan . '_' . time() . '.' . $fileSuratPenugasan->getClientOriginalExtension();
+                  $fileName = $noTrans . '-SP_' . time() . '.' . $fileSuratPenugasan->getClientOriginalExtension();
                   $fileSuratPenugasan->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
-                  $updateData['surat_penugasan'] = $fileName;
+                  $laporanPengiriman['surat_penugasan'] = $fileName;
                }
 
                $fileFotoTruck = $request->file('fotoTruck');
@@ -112,10 +112,10 @@ class PelaporanController extends Controller
                      'fotoTruck'  => 'required|image|mimes:jpeg,jpg,png|max:1204',
                   ]);
 
-                  $fileName =  $request->kdLaporan . '_' . time() . '.' . $fileFotoTruck->getClientOriginalExtension();
+                  $fileName =  $noTrans . '-FT_' . time() . '.' . $fileFotoTruck->getClientOriginalExtension();
                   $fileFotoTruck->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
-                  $updateData['foto_truck'] = $fileName;
+                  $laporanPengiriman['foto_truck'] = $fileName;
                }
 
                LaporanPengiriman::create($laporanPengiriman);
@@ -148,7 +148,7 @@ class PelaporanController extends Controller
                      'si'  => 'required|mimes:pdf|max:1204',
                   ]);
 
-                  $fileName = $request->kdLaporan . '_' . time() . '.' . $fileSI->getClientOriginalExtension();
+                  $fileName = $request->kdLaporan . '-SI_' . time() . '.' . $fileSI->getClientOriginalExtension();
                   $fileSI->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
                   $updateData['si'] = $fileName;
@@ -160,7 +160,7 @@ class PelaporanController extends Controller
                      'noKontainer'  => 'required|mimes:pdf|max:1204',
                   ]);
 
-                  $fileName = $request->kdLaporan . '_' . time() . '.' . $fileNoKontainer->getClientOriginalExtension();
+                  $fileName = $request->kdLaporan . '-NK_' . time() . '.' . $fileNoKontainer->getClientOriginalExtension();
                   $fileNoKontainer->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
                   $updateData['no_kontainer'] = $fileName;
@@ -172,7 +172,7 @@ class PelaporanController extends Controller
                      'suratPenugasan'  => 'required|mimes:pdf|max:1204',
                   ]);
 
-                  $fileName = $request->kdLaporan . '_' . time() . '.' . $fileSuratPenugasan->getClientOriginalExtension();
+                  $fileName = $request->kdLaporan . '-SP_' . time() . '.' . $fileSuratPenugasan->getClientOriginalExtension();
                   $fileSuratPenugasan->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
                   $updateData['surat_penugasan'] = $fileName;
@@ -184,7 +184,7 @@ class PelaporanController extends Controller
                      'fotoTruck'  => 'required|image|mimes:jpeg,jpg,png|max:1204',
                   ]);
 
-                  $fileName =  $request->kdLaporan . '_' . time() . '.' . $fileFotoTruck->getClientOriginalExtension();
+                  $fileName =  $request->kdLaporan . '-FT_' . time() . '.' . $fileFotoTruck->getClientOriginalExtension();
                   $fileFotoTruck->storeAs('foto-lap-pengiriman', $fileName, 'public');
 
                   $updateData['foto_truck'] = $fileName;
@@ -271,16 +271,16 @@ class PelaporanController extends Controller
          return back()->with('warning', 'Maaf kode Transaksi tidak di temukan');
       }
 
-      $fileSI = storage_path("app/public/" . $nmFolder . "/" . $laporanPengiriman->si);
-      $fileNoKontainer = storage_path("app/public/" . $nmFolder . "/" . $laporanPengiriman->no_kontainer);
-      $fileSuratPenugasan = storage_path("app/public/" . $nmFolder . "/" . $laporanPengiriman->surat_penugasan);
+      $fileSI = storage_path("app/public/foto-lap-pengiriman/{$laporanPengiriman->si}");
+      $fileNoKontainer = storage_path("app/public/foto-lap-pengiriman/{$laporanPengiriman->no_kontainer}");
+      $fileSuratPenugasan = storage_path("app/public/foto-lap-pengiriman/{$laporanPengiriman->surat_penugasan}");
       // $filePath = storage_path("app/public/uploads/{$fileHeader->nm_file}");
 
       DB::beginTransaction();
       try {
-         unlink($fileSI);
-         unlink($fileNoKontainer);
-         unlink($fileSuratPenugasan);
+         (File::exists($fileSI)) ? unlink($fileSI) : '';
+         (File::exists($fileNoKontainer)) ? unlink($fileNoKontainer) : '';
+         (File::exists($fileSuratPenugasan)) ? unlink($fileSuratPenugasan) : '';
          $laporanPengiriman->update(['is_hapus' => 1]);
 
          ########## Save Logs ##########################################################################
