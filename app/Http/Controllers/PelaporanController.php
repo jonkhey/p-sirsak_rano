@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanPengiriman;
+use App\Models\UserData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -19,6 +20,7 @@ class PelaporanController extends Controller
    {
       $data['titleForm'] = title_url();
       $data['laporanPengiriman'] = LaporanPengiriman::where('is_hapus', 0)->orderBy('tgl_laporan', 'desc')->get();
+      $data['noTelp'] = UserData::where('kd_role', 'RL00003')->first()->no_telp;
 
       return view('admin.pelaporan.pelaporan_pengiriman', $data);
    }
