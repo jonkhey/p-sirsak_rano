@@ -3,6 +3,9 @@
    @include('components.datatables_css')
 @endsection
 @section('body')
+   @php
+      $kdRole = auth()->user()->userData()->kd_role;
+   @endphp
    <div class="row">
       <div class="col-lg-12">
          <div class="card card-{{ $styleApp->value_10 }}">
@@ -11,7 +14,7 @@
             </div>
             <div class="card-body">
                <div class="form-group">
-                  @if (auth()->user()->userData()->joinMstRoles->urutan_role == 2)
+                  @if ($kdRole == 'RL00002')
                      <button type="button" data-mode="addPelaporan" data-id="0" class="dataModall btn btn-{{ $styleApp->value_10 }}" data-toggle="modal" data-target="#modalForm">
                         Tambah Shipping Instruction
                      </button>
@@ -67,7 +70,7 @@
                                  data-target="#modalForm">
                                  Edit
                               </button>
-                              @if (auth()->user()->userData()->kd_role === 'RL00002')
+                              @if ($kdRole == 'RL00002')
                                  <a class="btn btn-sm btn-danger"
                                     href="{{ url('pelaporan_pengiriman/delete', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt('foto-lap-pengiriman'), 'id3' => encrypt(0)]) }}"
                                     onclick="return confirm('Apakah Anda yakin ingin Shipping Instruction ini ?')"><i class="fas fa-trash-alt"></i></a>
