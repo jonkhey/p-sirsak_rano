@@ -7,6 +7,8 @@
 <div class="modal-body">
    @php
       $roles = auth()->user()->userData()->joinMstRoles->urutan_role;
+      $kdRole = auth()->user()->userData()->kd_role;
+
       if ($dataMode == 'addPelaporan') {
           $kdLaporan = 'LP' . date('ymd') . '0000';
           $tglLaporan = date('Y-m-d');
@@ -35,19 +37,21 @@
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Tanggal</label>
          <div class="col-sm-2">
-            <input type="date" class="form-control" name="tglLaporan" value="{{ $tglLaporan }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
+            <input type="date" class="form-control" name="tglLaporan" value="{{ $tglLaporan }}" @required($dataMode == 'addPelaporan') @readonly($kdRole != 'RL00002')>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Shipping Instruction</label>
          {{-- <div class="col-sm-6">
-            <input type="text" class="form-control" name="si" value="{{ $si }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
+            <input type="text" class="form-control" name="si" value="{{ $si }}" @required($dataMode == 'addPelaporan') @readonly($kdRole != 'RL00002')>
          </div> --}}
-         <div class="col-sm-4">
-            <input type="file" class="form-control" name="si" value="{{ $si }}">
-            <code>file harus berformat pdf, maksimal 1MB</code>
-         </div>
+         @if ($kdRole == 'RL00002')
+            <div class="col-sm-4">
+               <input type="file" class="form-control" name="si" value="{{ $si }}">
+               <code>file harus berformat pdf, maksimal 1MB</code>
+            </div>
+         @endif
          @if ($si)
             <div class="col-sm-4">
                <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt('si')]) }}"><i
@@ -59,12 +63,14 @@
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">No Kontainer</label>
          {{-- <div class="col-sm-6">
-            <input type="text" class="form-control" name="noKontainer" value="{{ $noKontainer }}" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>
+            <input type="text" class="form-control" name="noKontainer" value="{{ $noKontainer }}" @required($dataMode == 'addPelaporan') @readonly($kdRole != 'RL00002')>
          </div> --}}
-         <div class="col-sm-4">
-            <input type="file" class="form-control" name="noKontainer" value="{{ $noKontainer }}">
-            <code>file harus berformat pdf, maksimal 1MB</code>
-         </div>
+         @if ($kdRole == 'RL00002')
+            <div class="col-sm-4">
+               <input type="file" class="form-control" name="noKontainer" value="{{ $noKontainer }}">
+               <code>file harus berformat pdf, maksimal 1MB</code>
+            </div>
+         @endif
          @if ($noKontainer)
             <div class="col-sm-4">
                <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt('noKontainer')]) }}"><i
@@ -75,10 +81,12 @@
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Surat Penugasan</label>
-         <div class="col-sm-4">
-            <input type="file" class="form-control" name="suratPenugasan" value="{{ $suratPenugasan }}">
-            <code>file harus berformat pdf, maksimal 1MB</code>
-         </div>
+         @if ($kdRole == 'RL00002')
+            <div class="col-sm-4">
+               <input type="file" class="form-control" name="suratPenugasan" value="{{ $suratPenugasan }}">
+               <code>file harus berformat pdf, maksimal 1MB</code>
+            </div>
+         @endif
          @if ($suratPenugasan)
             <div class="col-sm-4">
                <a class="btn btn-sm btn-success" href="{{ url('pelaporan_pengiriman/download', ['id1' => encrypt($kdLaporan), 'id2' => encrypt('suratPenugasan')]) }}"><i
@@ -90,35 +98,35 @@
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Keterangan</label>
          <div class="col-sm-7">
-            <textarea class="form-control" name="keterangan" cols="30" rows="4" @required($dataMode == 'addPelaporan') @readonly($roles != 2)>{{ $keterangan }}</textarea>
+            <textarea class="form-control" name="keterangan" cols="30" rows="7" @required($dataMode == 'addPelaporan') @readonly($kdRole != 'RL00002')>{{ $keterangan }}</textarea>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Tanggal Pengiriman</label>
          <div class="col-sm-2">
-            <input type="date" class="form-control" name="tglPengiriman" value="{{ $tglPengiriman }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
+            <input type="date" class="form-control" name="tglPengiriman" value="{{ $tglPengiriman }}" @required($dataMode == 'editPelaporan') @readonly($kdRole != 'RL00003')>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Ketersediaan Truck</label>
          <div class="col-sm-2">
-            <input type="number" class="form-control" name="ketersediaanTruck" value="{{ $ketersediaanTruck }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
+            <input type="number" class="form-control" name="ketersediaanTruck" value="{{ $ketersediaanTruck }}" @required($dataMode == 'editPelaporan') @readonly($kdRole != 'RL00003')>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Nama Sopir</label>
          <div class="col-sm-6">
-            <input type="text" class="form-control" name="nmSupir" value="{{ $nmSupir }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
+            <input type="text" class="form-control" name="nmSupir" value="{{ $nmSupir }}" @required($dataMode == 'editPelaporan') @readonly($kdRole != 'RL00003')>
          </div>
       </div>
 
       <div class="form-group row">
          <label class="col-sm-2 col-form-label">Pelat Nomor Truck</label>
-         <div class="col-sm-2">
-            <input type="text" class="form-control" name="nomorPelat" value="{{ $nomorPelat }}" @required($dataMode == 'editPelaporan') @readonly($roles != 3)>
+         <div class="col-sm-6">
+            <input type="text" class="form-control" name="nomorPelat" value="{{ $nomorPelat }}" @required($dataMode == 'editPelaporan') @readonly($kdRole != 'RL00003')>
          </div>
       </div>
 
@@ -127,7 +135,7 @@
          <div class="col-sm-9">
             <div class="input-group">
                <div class="row">
-                  @if ($dataMode == 'editPelaporan')
+                  @if ($dataMode == 'editPelaporan' && $kdRole == 'RL00003')
                      <div class="col-lg-12">
                         @include('components.file_upload', ['name' => 'fotoTruck'])
                         <code>foto harus berformat jpg / png, maksimal 1MB</code>

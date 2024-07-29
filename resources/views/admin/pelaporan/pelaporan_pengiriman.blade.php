@@ -67,11 +67,13 @@
                                  data-target="#modalForm">
                                  Edit
                               </button>
-                              <a class="btn btn-sm btn-danger"
-                                 href="{{ url('pelaporan_pengiriman/delete', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt('foto-lap-pengiriman'), 'id3' => encrypt(0)]) }}"
-                                 onclick="return confirm('Apakah Anda yakin ingin Shipping Instruction ini ?')"><i class="fas fa-trash-alt"></i></a>
-                              <a class="btn btn-sm btn-info" href="https://wa.me/{{ $noTelp }}?text={{ urlencode($rs->keterangan_laporan) }}" target="_blank">
-                                 <i class="fas fa-paper-plane"></i> WA
+                              @if (auth()->user()->userData()->kd_role === 'RL00002')
+                                 <a class="btn btn-sm btn-danger"
+                                    href="{{ url('pelaporan_pengiriman/delete', ['id1' => encrypt($rs->kd_laporan), 'id2' => encrypt('foto-lap-pengiriman'), 'id3' => encrypt(0)]) }}"
+                                    onclick="return confirm('Apakah Anda yakin ingin Shipping Instruction ini ?')"><i class="fas fa-trash-alt"></i></a>
+                                 <a class="btn btn-sm btn-info" href="https://wa.me/{{ $noTelp }}?text={{ urlencode($rs->keterangan_laporan) }}" target="_blank">
+                                    <i class="fas fa-paper-plane"></i> WA
+                              @endif
                               </a>
                            </td>
                         </tr>
